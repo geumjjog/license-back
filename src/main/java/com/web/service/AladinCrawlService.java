@@ -91,7 +91,9 @@ public class AladinCrawlService {
 				Elements imageElementsThird = bookElement.select(
 						"table tbody tr td table tbody tr td div.cover_area_other a img[src$=.jpg]");
 				String imageNameThird = imageElementsThird.attr("src");
-				
+				//바로가기링크
+				String viewDetail = bookElements.select("table tbody tr td table tbody tr td div.cover_area a").attr("href");
+				System.out.println("아아아아ㅏ아아ㅏ아아아"+viewDetail);
 				
 				String imageName = "";
 				// 이미지가 있는 경우에만 값을 할당
@@ -107,6 +109,7 @@ public class AladinCrawlService {
 						.bookName(bookName)
 						.bookPrice(bookPrice)
 						.imageName(imageName)
+						.viewDetail(viewDetail)
 						.build();
 
 				bookCrawls.add(bookCrawl);
@@ -165,7 +168,9 @@ public class AladinCrawlService {
 						"table tbody tr td table tbody tr td div.cover_area_other a img[src$=.jpg]");
 				String imageNameThird = imageElementsThird.attr("src");
 				
-				
+				//바로가기링크
+				String viewDetail = bookElements.select("table tbody tr td table tbody tr td div.cover_area a").attr("href");
+				System.out.println("아아아아ㅏ아아ㅏ아아아"+viewDetail);
 				String imageName = "";
 				// 이미지가 있는 경우에만 값을 할당
 				if (!imageElementsFirst.isEmpty()) {
@@ -180,6 +185,7 @@ public class AladinCrawlService {
 						.bookName(bookName)
 						.bookPrice(bookPrice)
 						.imageName(imageName)
+						.viewDetail(viewDetail)
 						.build();
 
 				bookCrawls.add(bookCrawl);

@@ -60,6 +60,7 @@ public class CrawlController {
 	    public ResponseEntity<List<TotalBookCrawl>> searchBooks(
 	            @RequestParam(required = false) String search
 	    ) {
+		System.out.println("검색어 받았낭 "+search);
 	        try {
 	            // 각 사이트에서 도서 정보를 가져오는 로직
 	            List<Yes24BookCrawl> yes24Books = bookCrawlService.getSearchBooksFromCrawl(search);
