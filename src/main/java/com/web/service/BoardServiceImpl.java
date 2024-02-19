@@ -31,42 +31,22 @@ public class BoardServiceImpl implements BoardService, FolderPathREPO {
 	private ReplyRepository replyRepository;
 	
 	
-	// 게시글 목록 
 	@Override
-	public void board(Model model, Board board, Pageable pageable, 
-					  String searchCode, String searchKeyword, Long boardChoice) {
-		Page<Board> boardList;
-		if(searchCode == null || searchCode == "") {
-			boardList = boardRepo.findByBoardChoice(pageable, boardChoice);
-		} else if ( searchCode.equals("title")) {
-			boardList = boardRepo.findByBoardChoiceAndBoardTitleContaining(boardChoice, searchKeyword, pageable);
-		} else {
-			boardList = boardRepo.findByBoardChoiceAndBoardUsernameContaining(boardChoice, searchKeyword, pageable);
-		}
-		//제목으로 검색할 때
-		// 현재 페이지 : Page 객체를 사용하여 현재 인덱스 추출 >> 1로 표시하기 위해 +1
-		int nowPage = boardList.getPageable().getPageNumber() + 1;
-		// 시작 페이지 : 현재 페이지의 -2 개
-		int startPage = Math.max(nowPage - 2, 1);
-		// 시작 페이지 : 현재 페이지의 +2 개
-		int endPage = Math.min(nowPage + 2, boardList.getTotalPages());
-
-		model.addAttribute("boardList", boardList);
-		model.addAttribute("nowPage", nowPage);
-		model.addAttribute("startPage", startPage);
-		model.addAttribute("endPage", endPage);
+	public List<Board> getBoardList() {
+	    return boardRepo.findAll();
 	}
+	
 
 	// 게시글 글 쓰기 
 	@Override
-	public void board_write(MultipartHttpServletRequest mul) {
+	public void board_write(String title,String content,MultipartFile file,String memberId) {
 		Board board = new Board();
-		board.setBoardTitle(mul.getParameter("boardTitle"));
-		board.setBoardContents(mul.getParameter("boardContents"));
-		board.setBoardUsername(mul.getParameter("boardUserId"));
-		board.setBoardChoice(Long.parseLong(mul.getParameter("boardChoice")));
-		MultipartFile file = mul.getFile("file");
-		if(file.getSize() !=0) {
+		System.out.println("=====게시글 제목========"+title);
+		board.setBoardTitle(title);
+		board.setBoardContents(content);
+		board.setBoardUsername(memberId);
+		MultipartFile files = file;
+		if(files != null && files.getSize() !=0) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss-");
 			Calendar calendar = Calendar.getInstance();
 			String sysFileName = sdf.format(calendar.getTime());
@@ -83,22 +63,16 @@ public class BoardServiceImpl implements BoardService, FolderPathREPO {
 			// 파일이 존재하지 않을 시 DB에 nan으로 저장
 			board.setFile("nan");
 		}
+		// 데이터베이스에 저장
+	    boardRepo.save(board);
 		
 	}
 	// 게시글 상세페이지 : 
-	@Override
-	public int board_view(Model model, Long boardSeq) {
-		Optional<Board> optional = boardRepo.findById(boardSeq);
-		if(optional.isPresent()) { 
-			Board board = optional.get();
-			board.setBoardViews(board.getBoardViews()+1);
-			boardRepo.save(board);
-			model.addAttribute("board",board);
-			return 1; // 찾음 >> 뷰페이지 띄움
-		} else {
-			return 0; // 못찾음 >> 뷰페이지 띄우지 않고 리스트로 돌아감(board.html)
-		}
-	}
+
+	 public Board getBoardBySeq(Long boardSeq) {
+	        Optional<Board> optionalBoard = boardRepo.findById(boardSeq);
+	        return optionalBoard.orElse(null);
+	    }
 	
 	// 게시글 글 수정 시 정보데이터 & seq 같이 보내기 + 페이징처리 
 	@Override
@@ -114,7 +88,6 @@ public class BoardServiceImpl implements BoardService, FolderPathREPO {
 		Board board = boardRepo.findById(a).get();
 		board.setBoardTitle(mul.getParameter("boardTitle"));
 		board.setBoardContents(mul.getParameter("boardContents"));
-		board.setBoardChoice(Long.parseLong(mul.getParameter("boardChoice")));
 		MultipartFile file = mul.getFile("file");
 		
 		if(file.getSize() !=0) {
@@ -146,35 +119,28 @@ public class BoardServiceImpl implements BoardService, FolderPathREPO {
 		boardRepo.deleteById(board.getBoardSeq());
 	}
 
-	// 게시글 공지사항
-	@Override
-	public void boardNotice(Model model) {
-		List<Board> noticeList = boardRepo.findByBoardChoice(3L);
-		model.addAttribute("noticeList",noticeList);
-	}
+//	// 게시글 공지사항
+//	@Override
+//	public void boardNotice(Model model) {
+//		List<Board> noticeList = boardRepo.findByBoardChoice(3L);
+//		model.addAttribute("noticeList",noticeList);
+//	}
 
-	// 내가 쓴 글
-	@Override
-	public void myBoardList(Model model, Board board, Pageable pageable, Member member) {
-		String username = member.getUsername();
-		Page<Board> boardList = boardRepo.findByBoardUsername(pageable, username);
-		int nowPage = boardList.getPageable().getPageNumber() + 1;
-
-		int startPage = Math.max(nowPage - 4, 1);
-		int endPage = Math.min(nowPage + 5, boardList.getTotalPages());
-
-		model.addAttribute("boardList", boardList);
-		model.addAttribute("nowPage", nowPage);
-		model.addAttribute("startPage", startPage);
-		model.addAttribute("endPage", endPage);
-	}
-	// 인덱스용 추천 top4 
-	@Override
-	public void top4_reco(Model model) {
-		// TODO Auto-generated method stub
-		List<Board> top4 = boardRepo.findTop4ByOrderByBoardRecommendDesc(); 
-		model.addAttribute("topReco", top4);
-	}
+//	// 내가 쓴 글
+//	@Override
+//	public void myBoardList(Model model, Board board, Pageable pageable, Member member) {
+//		String username = member.getUsername();
+//		int nowPage = boardList.getPageable().getPageNumber() + 1;
+//
+//		int startPage = Math.max(nowPage - 4, 1);
+//		int endPage = Math.min(nowPage + 5, boardList.getTotalPages());
+//
+//		model.addAttribute("boardList", boardList);
+//		model.addAttribute("nowPage", nowPage);
+//		model.addAttribute("startPage", startPage);
+//		model.addAttribute("endPage", endPage);
+//	}
+//	
 	
 	
 }
