@@ -95,8 +95,9 @@ public class SecurityConfig {
 		
 		http
 			.authorizeHttpRequests((auth) -> auth
+					.antMatchers("/**").permitAll()
 					.antMatchers("/login", "/", "/join").permitAll()
-					.antMatchers("/admin").hasRole("ADMIN")
+					.antMatchers("/admin/**").hasRole("ADMIN")
 					.anyRequest().permitAll()
 					);
 		
@@ -122,3 +123,4 @@ public class SecurityConfig {
 		return http.build();
 	}
 }
+

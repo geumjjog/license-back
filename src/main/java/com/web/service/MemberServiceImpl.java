@@ -30,6 +30,8 @@ import com.web.persistence.CheckMemberEmailRepository;
 import com.web.persistence.MemberRepository;
 @Service
 public class MemberServiceImpl implements MemberService{
+	
+	
 	@Autowired
 	private MemberRepository memberRepository;
 	@Autowired
@@ -241,7 +243,6 @@ public class MemberServiceImpl implements MemberService{
 					findMember = memberRepository.findByMemberNameAndEmail(joinDTO.getMemberName(),joinDTO.getEmail());
 				}
 				map.put("username", findMember.getUsername());
-				map.put("createDate", findMember.getCreateDate());
 				map.put("result", "Success");
 				return map;
 			} catch (Exception e) {
@@ -311,6 +312,24 @@ public class MemberServiceImpl implements MemberService{
 	            memberRepository.delete(member);
 	        } else {
 	            throw new NoSuchElementException("회원이 존재하지 않습니다. memberId: " + memberNum);
+	        }
+	    }
+
+	    public Member getMemberByUsername(String username) {
+	        return memberRepository.findByUsername(username);
+	    }
+	    
+	    @Override
+	    public void updateMember(String username, String memberName, String email, String membership) {
+	        Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByUsername(username));
+	        if (optionalMember.isPresent()) {
+	            Member member = optionalMember.get();
+	            member.setMemberName(memberName);
+	            member.setEmail(email);
+	            member.setMembership(membership);
+	            memberRepository.save(member);
+	        } else {
+	            throw new NoSuchElementException("Member not found with username: " + username);
 	        }
 	    }
 	    

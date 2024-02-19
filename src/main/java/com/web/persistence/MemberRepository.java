@@ -11,6 +11,7 @@ import com.web.domain.SocialType;
 public interface MemberRepository extends JpaRepository<Member, Long>{
 
 	Member findByUsername(String username);
+	
 
 	Boolean existsByUsername(String username);
 	

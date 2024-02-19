@@ -31,7 +31,7 @@ import lombok.ToString;
 @Entity
 @SequenceGenerator(name="MEMBER_SEQ_GENERATOR", sequenceName="MEMBER_SEQ", allocationSize = 1)
 @Table(name="MEMBER")
-public class Member extends BaseEntity{
+public class Member{
 
 	@Id
 	@Column(name = "MEMBER_NUM")
