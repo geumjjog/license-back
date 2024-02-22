@@ -30,22 +30,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;
 	}
-
-	// 이전 코드
-//	@Override
-//	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-//		String username = obtainUsername(request);
-//		String password = obtainPassword(request);
-//		
-//		System.out.println(username);
-//		System.out.println(password);
-//		
-//		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
-//		
-//		System.out.println(authToken);
-//		
-//		return authenticationManager.authenticate(authToken);
-//	}
 	
 	// 수정 코드
 	@Override
@@ -72,14 +56,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authentication) {
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-//		String username = customUserDetails.getUsername();
-//		
-//
-//		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//		GrantedAuthority auth = iterator.next();
-//
-//		String role = auth.getAuthority();
 
 		String email = customUserDetails.getEmail();
 		Long memberNum = customUserDetails.getMemberNum();

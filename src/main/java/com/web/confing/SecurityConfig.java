@@ -14,12 +14,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.web.jwt.JwtFilter;
 import com.web.jwt.JWTUtil;
+import com.web.jwt.JwtFilter;
 import com.web.jwt.LoginFilter;
 import com.web.oauth2.handler.OAuth2LoginFailureHandler;
 import com.web.oauth2.handler.OAuth2LoginSuccessHandler;
